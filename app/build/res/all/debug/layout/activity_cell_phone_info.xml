@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".CellPhoneInfo" >
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="800dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:text="http://10.0.15.40:8181/user_locations.json" >
+
+        <requestFocus />
+    </EditText>
+
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editTextGPRS"
+        android:layout_alignRight="@+id/editTextGPRS"
+        android:layout_below="@+id/editTextGPRS"
+        android:layout_marginTop="60dp"
+        android:text="ToggleButton" />
+
+    <EditText
+        android:id="@+id/editTextGPRS"
+        android:layout_width="800dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_below="@+id/editText2"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:text="http://10.215.1.11:8080/user_locations.json" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editTextGPRS"
+        android:layout_below="@+id/editTextGPRS"
+        android:text="GPRS IP Address" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_below="@+id/editText2"
+        android:text="WiFi (CMU-SV) IP Address" />
+
+</RelativeLayout><!-- From: file:/Users/ervin/AndroidStudioProjects/CellPhoneInfo/app/src/main/res/layout/activity_cell_phone_info.xml -->
