@@ -264,7 +264,6 @@ containing a value of this type.
         public static final int common_signin_button_text=0x7f08001a;
         public static final int common_signin_button_text_long=0x7f08001b;
         public static final int getCellPhoneInfo=0x7f08001c;
-        public static final int hello_world=0x7f08001d;
     }
     public static final class style {
         /** 
