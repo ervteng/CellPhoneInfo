@@ -1,40 +1,23 @@
 package com.example.cellphoneinfo;
 
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-
-//import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-//import org.apache.http.impl.client.DefaultHttpClient;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Environment;
-//import android.os.AsyncTask;
-import android.os.IBinder;
+
+
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.location.Location;
+import com.b2msolutions.reyna.*;
+import com.b2msolutions.reyna.services.StoreService;
 
 public class InfoJsonSend{
 
@@ -47,8 +30,6 @@ public class InfoJsonSend{
 	String IMEINumber;
 	String IMSINumber;
 	int signalStrengthDB;
-	String filename;
-	File file;
 	Long tsLong;
 	Long timeStamp;
 	String ts;
@@ -67,9 +48,6 @@ public class InfoJsonSend{
 		IMSINumber = cellInfo.getSubscriberId();
 		my_context = context;
 		signalStrengthDB = 0;
-		 filename = "cellPhoneInfo.txt";
-		 
-		 file = new File(Environment.getExternalStorageDirectory(), filename);
 		 
 		 MyListener = new MyPhoneStateListener();
 		 cellInfo.listen(MyListener ,PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
@@ -96,110 +74,69 @@ public class InfoJsonSend{
 
     }/* End of private Class */
 	
-	public String postDataToServer(Location location, String ipaddr) throws JSONException, ClientProtocolException, IOException{
+	public int sendToReyna(Location location, String ipaddr){
 		
-		// for example value of first element
-		
-		Latitude = location.getLatitude();
-		Longitude = location.getLongitude();
-		
-		latitudeStr = String.valueOf(Latitude);
-		longitudeStr = String.valueOf(Longitude);
-		
-		GsmCellLocation gsmLoc = (GsmCellLocation)cellInfo.getCellLocation();
+        // for example value of first element
 
-		tsLong = System.currentTimeMillis();
-		timeStamp = tsLong/1000;
-		
-		ts = tsLong.toString();
-		
-		
-		
-		JSONObject storeData =new JSONObject();
-	    JSONObject infoJson =new JSONObject();
-	    storeData.put("latitude", latitudeStr);
-	    storeData.put("longitude", longitudeStr);
-	    storeData.put("imei", IMEINumber);
-	    storeData.put("imsi", IMSINumber);
-	    storeData.put("RSSI", String.valueOf(signalStrengthDB));
-	    storeData.put("lac", String.valueOf(gsmLoc.getLac()));
-	    storeData.put("timestamp", tsLong);
-	    //storeData.put("timestamp_seconds", timeStamp);
-	    infoJson.put("user_location",storeData);
+        Latitude = location.getLatitude();
+        Longitude = location.getLongitude();
+
+        latitudeStr = String.valueOf(Latitude);
+        longitudeStr = String.valueOf(Longitude);
+
+        GsmCellLocation gsmLoc = (GsmCellLocation)cellInfo.getCellLocation();
+
+        tsLong = System.currentTimeMillis();
+        timeStamp = tsLong/1000;
+
+        ts = tsLong.toString();
+
+        JSONObject jsonInfo = new JSONObject();
+        JSONObject userInfo = new JSONObject();
+        try{
+
+            userInfo.put("latitude", latitudeStr);
+            userInfo.put("longitude", longitudeStr);
+            userInfo.put("imei", IMEINumber);
+            userInfo.put("imsi", IMSINumber);
+            userInfo.put("RSSI", String.valueOf(signalStrengthDB));
+            userInfo.put("lac", String.valueOf(gsmLoc.getLac()));
+            userInfo.put("timestamp", tsLong);
+            //storeData.put("timestamp_seconds", timeStamp);
+            jsonInfo.put("user_location",userInfo);
 
 
-	     jsonOutput =infoJson.toString();
-	     
-	     Log.i("cellPhoneInfo", jsonOutput);
-	     
-	     
-	     
-	     
-	     /*if(file.exists())
-	     {
-	          FileWriter fo = new FileWriter(file, true);
-	          //BufferedWriter out = new BufferedWriter(fo);
-	         
-	          fo.append(jsonOutput+"\n");
-	          fo.close();
-	          System.out.println("file created: "+file);
-	          
-	     } 
-	     
-	     else
-	     {
-	    	file.createNewFile(); 
-	     }*/
-	     
-	   
-	     
-	     DefaultHttpClient client = new DefaultHttpClient();
-	     try{
-	     HttpPost post = new HttpPost(ipaddr);
-	     post.setEntity(new StringEntity(infoJson.toString()));
-	     post.setHeader("Accept", "application/json"); 
-         post.setHeader("Content-type", "application/json");
-         client.execute(post);
-	     }
-	     catch(UnsupportedEncodingException e){
-	    	 e.printStackTrace();
-	     }
-	     catch(ClientProtocolException e){
-	    	 e.printStackTrace();
-	     }
-	     catch(IOException e){
-	    	 e.printStackTrace();
-	     }
-		
-		 return jsonOutput;
-		
-		
-	}
-	
-	private class PostToServerTask extends AsyncTask<Object, Void, String> {
-        @Override
-        protected String doInBackground(Object... locationandip) {
-            Log.i("AsyncTask","Posting...");
-            
-            Location loc = (Location)locationandip[0];
-            String ip = (String)locationandip[1];
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                return postDataToServer(loc, ip);
-            } catch (IOException e) {
-                return "Unable to retrieve web page. URL may be invalid.";
-            } catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "JSON Exeption";
-			}
+            jsonOutput = jsonInfo.toString();
         }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-           	Log.i("AsyncTask","result");
-       }
-    }
+        catch (JSONException e){
+            return -1;
+        }
+
+        Log.i("cellPhoneInfo", jsonOutput);
+        Header[] headers = new Header[] {
+                new Header("Accept", "application/json"),
+                new Header("Content-Type", "application/json"),
+        };
+
+        URI theURI;
+        try{
+            theURI = new URI(ipaddr);
+        }
+        catch (URISyntaxException e)
+        {
+            return -1;
+        }
+        Message message = new Message(
+                theURI,
+                jsonInfo.toString(),
+                headers);
+
+        StoreService.start(my_context,message);
+        StoreService.setLogLevel(Log.DEBUG);
+		return 1;
+	}
+
+    //Checks if server is
 	public void postToServer(Location location)
 	{
 		String sendToThisIP;
@@ -212,24 +149,12 @@ public class InfoJsonSend{
 		else {
 			sendToThisIP = ipaddress_mobile;
 		}
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-        	Log.i("cellPhoneInfo","Task Created, IP = " + sendToThisIP);
-            new PostToServerTask().execute(location, sendToThisIP);
-        } else {
-            Log.i("cellPhoneInfo","No Network");
-        }
+
+        sendToReyna(location, sendToThisIP);
 	}
 
 
 
-
-	/*@Override
-	protected String doInBackground(Void... params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-*/
 	
 	
 }
