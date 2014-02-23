@@ -6,5 +6,11 @@
         android:showAsAction="never"
         android:checkable="true"
         android:checked="false"/>
+    <item
+        android:id="@+id/dynamic"
+        android:title="Dynamic Locations"
+        android:showAsAction="never"
+        android:checkable="true"
+        android:checked="true"/>
 
 </menu>

@@ -42,6 +42,26 @@
         android:text="http://10.215.1.11:8080/user_locations.json" />
 
     <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_below="@+id/editText2"
+        android:text="WiFi (CMU-SV) IP Address" />
+
+    <EditText
+        android:id="@+id/editTextUpdateInterval"
+        android:layout_width="800dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:text="10"
+        android:inputType="number"
+        android:layout_below="@+id/toggleButton1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,11 +70,12 @@
         android:text="GPRS IP Address" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText2"
-        android:layout_below="@+id/editText2"
-        android:text="WiFi (CMU-SV) IP Address" />
+        android:text="Update Interval in Seconds"
+        android:layout_below="@+id/editTextUpdateInterval"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

@@ -9,15 +9,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 
-
-//import java.io.UnsupportedEncodingException;
-
-
-
-
-
-
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
@@ -30,14 +21,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
-
-
-
-
-
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -54,8 +37,7 @@ import android.util.Log;
 import android.location.Location;
 
 public class InfoJsonSend{
-	
-	GPSTracker gps;
+
 	double Latitude;
 	double Longitude;
 	String latitudeStr;
@@ -64,12 +46,9 @@ public class InfoJsonSend{
 	TelephonyManager  cellInfo;
 	String IMEINumber;
 	String IMSINumber;
-	StringEntity se;
 	int signalStrengthDB;
-	HttpResponse response;
 	String filename;
 	File file;
-	String root;
 	Long tsLong;
 	Long timeStamp;
 	String ts;
@@ -112,9 +91,10 @@ public class InfoJsonSend{
          }
          else
         	 signalStrengthDB = -113 + signalStrengthInt*2;
+
       }
 
-    };/* End of private Class */
+    }/* End of private Class */
 	
 	public String postDataToServer(Location location, String ipaddr) throws JSONException, ClientProtocolException, IOException{
 		
@@ -241,10 +221,6 @@ public class InfoJsonSend{
         }
 	}
 
-	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 

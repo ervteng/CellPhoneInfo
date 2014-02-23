@@ -29,18 +29,20 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     // Do we want debug toast messages?
     boolean isDebugMsg;
 
+    // Do we want dynamic location updates?
+    boolean isDynamic;
+
     InfoJsonSend jsonOutput;
 	String ipAddress, ipAddressMobile;
 	IBinder mBinder = new LocalBinder();
 	LocationRequest mLocationRequest;
 	boolean mUpdatesRequested;
- 
-    // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE = 1; // 0 meters
+
+    private static final long MIN_DISTANCE = 10; // 0 meters
     
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 30;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 10;
     // Update frequency in milliseconds
     private static final long UPDATE_INTERVAL =
             MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
@@ -51,11 +53,9 @@ GooglePlayServicesClient.OnConnectionFailedListener {
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
  
     // The minimum time between updates in milliseconds
- 
-    // Declaring a Location Manager
-    protected LocationManager locationManager;
-    
- 
+
+
+
 //    public GPSTracker(Context context, String ipaddress) {
 //        this.mContext = context;
 //        jsonOutput = new InfoJsonSend(context, ipaddress);
@@ -66,21 +66,30 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
     	ipAddress=intent.getExtras().getString("IP");
     	ipAddressMobile = intent.getExtras().getString("IP_mobile");
+        int updateInterval = intent.getExtras().getInt("updateInterval");
     	jsonOutput = new InfoJsonSend(this, ipAddress, ipAddressMobile);
         mLocationClient = new LocationClient(this, this, this);	
         isDebugMsg = intent.getExtras().getBoolean("DebugOn");
+        isDynamic = intent.getExtras().getBoolean("DynamicOn");
         //jsonOutput.postToServer(location);	
        
         //mLocationClient.requestLocationUpdates()
         
         mLocationRequest = LocationRequest.create();
         // Use high accuracy
-        mLocationRequest.setPriority(
-                LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         // Set the update interval to 5 seconds
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        // Set the fastest update interval to 1 second
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setInterval(updateInterval*1000);
+
+
+        if(isDynamic){
+            mLocationRequest.setSmallestDisplacement(MIN_DISTANCE);
+            //mLocationRequest.setFastestInterval(updateInterval*1000/2);
+        }
+        else {
+            mLocationRequest.setSmallestDisplacement(0);
+            mLocationRequest.setFastestInterval(updateInterval*1000);
+        }
         mUpdatesRequested = true;
         mLocationClient.connect();
         return Service.START_NOT_STICKY;
@@ -146,8 +155,9 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		// TODO Auto-generated method stub
 		Log.d("GPSTracker",mLocationClient.getLastLocation().toString());
 		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-		mLocationClient.requestLocationUpdates(mLocationRequest, (LocationListener) this);
+		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		jsonOutput.postToServer(mLocationClient.getLastLocation());
+        Log.d("GPSTracker", mLocationRequest.toString());
 	}
 
 	@Override
