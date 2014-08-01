@@ -4,5 +4,9 @@
     <string name="app_name">CROSS Tracker</string>
     <string name="action_settings">Settings</string>
     <string name="getCellPhoneInfo">Start Logging</string>
+    <string name="defaultGPRSAddress">http://10.215.1.11:8080/user_locations.json</string>
+    <string name="defaultWifiAddress">http://10.0.15.40:8181/user_locations.json</string>
+    <string name="defaultInterval">10</string>
+
 
 </resources>

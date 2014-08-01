@@ -64,6 +64,7 @@ public class CellPhoneInfo extends Activity {
         updateFrequencyField = (EditText)findViewById(R.id.editTextUpdateInterval);
 
         // Check if service is running, and set the button appropriately.
+        Log.d("cellPhoneInfo", Boolean.toString(isServiceRunning("com.crossmobile.phonetracker.GPSTracker")));
         getCellPhoneInfo.setChecked(isServiceRunning("com.crossmobile.phonetracker.GPSTracker"));
 
 		getCellPhoneInfo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -77,6 +78,7 @@ public class CellPhoneInfo extends Activity {
                     i.putExtra("updateInterval",Integer.valueOf(updateFrequencyField.getText().toString()));
                     i.putExtra("DynamicOn", isDynamic);
 		        	startService(i);
+                    //Log.d("cellPhoneInfo", Boolean.toString(isServiceRunning("com.crossmobile.phonetracker.GPSTracker")));
 		        	//bindService(i, mConnection, BIND_AUTO_CREATE);
 					//gps = new GPSTracker(CellPhoneInfo.this, ipAddressField.getText().toString());
 		        } else {
@@ -157,8 +159,8 @@ public class CellPhoneInfo extends Activity {
         List<ActivityManager.RunningServiceInfo> l = am.getRunningServices(50);
         Iterator<ActivityManager.RunningServiceInfo> i = l.iterator();
         while (i.hasNext()) {
-            ActivityManager.RunningServiceInfo runningServiceInfo = (ActivityManager.RunningServiceInfo) i.next();
-
+            ActivityManager.RunningServiceInfo runningServiceInfo = i.next();
+            Log.d("SERVICE INFO", runningServiceInfo.service.getClassName());
             if(runningServiceInfo.service.getClassName().equals(serviceName)){
                 serviceRunning = true;
             }

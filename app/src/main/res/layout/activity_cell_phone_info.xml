@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
         android:ems="10"
-        android:text="http://10.0.15.40:8181/user_locations.json" >
+        android:text="@string/defaultWifiAddress" >
 
         <requestFocus />
     </EditText>
@@ -39,7 +39,7 @@
         android:layout_below="@+id/editText2"
         android:layout_marginTop="24dp"
         android:ems="10"
-        android:text="http://10.215.1.11:8080/user_locations.json" />
+        android:text="@string/defaultGPRSAddress" />
 
     <TextView
         android:id="@+id/textView2"
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/editText2"
         android:layout_below="@+id/editText2"
-        android:text="WiFi (CMU-SV) IP Address" />
+        android:text="WiFi IP Address" />
 
     <EditText
         android:id="@+id/editTextUpdateInterval"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:ems="10"
-        android:text="10"
+        android:text="@string/defaultInterval"
         android:inputType="number"
         android:layout_below="@+id/toggleButton1"
         android:layout_alignParentLeft="true"

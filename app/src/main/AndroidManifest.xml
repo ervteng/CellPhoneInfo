@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.crossmobile.phonetracker"
     android:versionCode="4"
-    android:versionName="1.3" >
+    android:versionName="1.5" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -17,7 +17,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -37,6 +38,17 @@
             </intent-filter>
         </activity>
         <service android:enabled="true" android:name="com.crossmobile.phonetracker.GPSTracker" />
+
+        <receiver
+            android:name="StartCROSSTracker"
+            android:enabled="true"
+            android:exported="true"
+            android:label="StartCROSSTracker">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
 
         <!--Reyna store-and-forward library-->
         <service android:name="com.b2msolutions.reyna.services.StoreService" />
