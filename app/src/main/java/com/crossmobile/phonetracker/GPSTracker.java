@@ -8,12 +8,14 @@ import com.google.android.gms.location.LocationRequest;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.Context;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.BroadcastReceiver;
  
 public class GPSTracker extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener {
@@ -86,18 +88,14 @@ GooglePlayServicesClient.OnConnectionFailedListener {
             //mLocationRequest.setFastestInterval(updateInterval*1000/2);
         }
         else {
-            mLocationRequest.setSmallestDisplacement(0);
+            //mLocationRequest.setSmallestDisplacement(0);
             mLocationRequest.setFastestInterval(updateInterval*1000);
         }
         mUpdatesRequested = true;
         mLocationClient.connect();
         return Service.START_NOT_STICKY;
     }
-  
-     
-    public boolean canGetLocation() {
-        return this.canGetLocation;
-    }
+
      
     
  
@@ -156,7 +154,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		jsonOutput.postToServer(mLocationClient.getLastLocation());
-        Log.d("GPSTracker", mLocationRequest.toString());
+        Log.d("GPSTracker", Float.toString(mLocationRequest.getSmallestDisplacement()));
 	}
 
 	@Override
@@ -164,8 +162,12 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		Toast.makeText(this, "Logging stopped", Toast.LENGTH_SHORT).show();
 		
 	}
+
+
  
 }
+
+
 
 
 

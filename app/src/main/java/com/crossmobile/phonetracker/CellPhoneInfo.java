@@ -14,7 +14,13 @@ import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ToggleButton;
+import android.app.ActivityManager;
+import java.util.List;
+import java.util.Iterator;
 
+import com.b2msolutions.reyna.services.ForwardService;
+import com.b2msolutions.reyna.services.RepositoryService;
+import com.b2msolutions.reyna.services.StoreService;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 
@@ -44,8 +50,8 @@ public class CellPhoneInfo extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		StrictMode.setThreadPolicy(policy);
+		//StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		//StrictMode.setThreadPolicy(policy);
 		setContentView(R.layout.activity_cell_phone_info);
 
 
@@ -56,6 +62,9 @@ public class CellPhoneInfo extends Activity {
 		ipAddressField = (EditText)findViewById(R.id.editText2);
 		ipAddressFieldGPRS = (EditText)findViewById(R.id.editTextGPRS);
         updateFrequencyField = (EditText)findViewById(R.id.editTextUpdateInterval);
+
+        // Check if service is running, and set the button appropriately.
+        getCellPhoneInfo.setChecked(isServiceRunning("com.crossmobile.phonetracker.GPSTracker"));
 
 		getCellPhoneInfo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -73,6 +82,9 @@ public class CellPhoneInfo extends Activity {
 		        } else {
 		        	Log.i("cellPhoneInfo","StoppingService");
 		        	stopService(new Intent(CellPhoneInfo.this, GPSTracker.class));
+                    stopService(new Intent(CellPhoneInfo.this, StoreService.class));
+                    stopService(new Intent(CellPhoneInfo.this, ForwardService.class));
+                    CellPhoneInfo.this.deleteDatabase("reyna.db");
 		        }
 		    }
 		});
@@ -115,5 +127,43 @@ public class CellPhoneInfo extends Activity {
 		getMenuInflater().inflate(R.menu.cell_phone_info, menu);
 		return true;
 	}
+
+    @Override
+    protected void onSaveInstanceState(Bundle outstate)
+    {
+        super.onSaveInstanceState(outstate);
+        outstate.putString("IPaddr", ipAddressField.getText().toString());
+        outstate.putString("IPaddrMobile", ipAddressFieldGPRS.getText().toString());
+        outstate.putBoolean("isDynamic", isDynamic);
+        outstate.putBoolean("isDebugMsg", isDebugMsg);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        MenuItem isDynamicBox = (MenuItem)findViewById(R.id.dynamic);
+        MenuItem isDebugBox = (MenuItem)findViewById(R.id.debug);
+
+        super.onRestoreInstanceState(savedInstanceState);
+        ipAddressField.setText(savedInstanceState.getString("IPaddr"));
+        ipAddressFieldGPRS.setText(savedInstanceState.getString("IPaddrMobile"));
+        isDynamicBox.setChecked(savedInstanceState.getBoolean("isDynamic"));
+        isDebugBox.setChecked(savedInstanceState.getBoolean("isDebugMsg"));
+    }
+
+    private boolean isServiceRunning(String serviceName){
+        boolean serviceRunning = false;
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> l = am.getRunningServices(50);
+        Iterator<ActivityManager.RunningServiceInfo> i = l.iterator();
+        while (i.hasNext()) {
+            ActivityManager.RunningServiceInfo runningServiceInfo = (ActivityManager.RunningServiceInfo) i.next();
+
+            if(runningServiceInfo.service.getClassName().equals(serviceName)){
+                serviceRunning = true;
+            }
+        }
+        return serviceRunning;
+    }
 
 }
