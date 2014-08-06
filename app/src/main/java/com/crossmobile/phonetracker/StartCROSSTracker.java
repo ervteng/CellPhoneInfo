@@ -20,6 +20,7 @@ public class StartCROSSTracker extends BroadcastReceiver {
             i.putExtra("DebugOn", false);
             i.putExtra("updateInterval",Integer.valueOf(context.getString(R.string.defaultInterval)));
             i.putExtra("DynamicOn", true);
+            i.putExtra("SendOnMobile",true);
             context.startService(i);
         }
     }

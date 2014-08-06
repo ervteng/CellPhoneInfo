@@ -77,6 +77,11 @@ public class CellPhoneInfo extends Activity {
                     i.putExtra("DebugOn", isDebugMsg);
                     i.putExtra("updateInterval",Integer.valueOf(updateFrequencyField.getText().toString()));
                     i.putExtra("DynamicOn", isDynamic);
+
+                    // This lets you send to two different addresses depending on what your network connectivity is.
+                    // For JIFX, we just send to one address, always.
+
+                    i.putExtra("SendOnMobile", true);
 		        	startService(i);
                     //Log.d("cellPhoneInfo", Boolean.toString(isServiceRunning("com.crossmobile.phonetracker.GPSTracker")));
 		        	//bindService(i, mConnection, BIND_AUTO_CREATE);
@@ -118,6 +123,7 @@ public class CellPhoneInfo extends Activity {
                     item.setChecked(true);
                 }
                 return super.onOptionsItemSelected(item);
+
             default:
                 return super.onOptionsItemSelected(item);
         }

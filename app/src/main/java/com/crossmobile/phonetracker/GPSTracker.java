@@ -33,6 +33,9 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     // Do we want dynamic location updates?
     boolean isDynamic;
 
+    // Do we want to allow sending on GPRS?
+    boolean sendOnMobile;
+
     InfoJsonSend jsonOutput;
 	String ipAddress, ipAddressMobile;
 	IBinder mBinder = new LocalBinder();
@@ -68,10 +71,11 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     	ipAddress=intent.getExtras().getString("IP");
     	ipAddressMobile = intent.getExtras().getString("IP_mobile");
         int updateInterval = intent.getExtras().getInt("updateInterval");
-    	jsonOutput = new InfoJsonSend(this, ipAddress, ipAddressMobile);
+    	jsonOutput = new InfoJsonSend(this, ipAddress, ipAddressMobile, sendOnMobile);
         mLocationClient = new LocationClient(this, this, this);	
         isDebugMsg = intent.getExtras().getBoolean("DebugOn");
         isDynamic = intent.getExtras().getBoolean("DynamicOn");
+        sendOnMobile = intent.getExtras().getBoolean("SendOnMobile");
         //jsonOutput.postToServer(location);	
        
         //mLocationClient.requestLocationUpdates()

@@ -45,10 +45,11 @@ public class InfoJsonSend{
 	String ts;
 	String ipaddress, ipaddress_mobile;
 	Context my_context;
+    boolean sendOnMobile;
 	MyPhoneStateListener    MyListener;
     WifiManager wifiManager;
 
-    public InfoJsonSend(Context context, String ipaddressin, String ipaddress_mobilein){
+    public InfoJsonSend(Context context, String ipaddressin, String ipaddress_mobilein, boolean sendOnMobile){
 		//gps = new GPSTracker(context);
 		ipaddress = ipaddressin;
 		ipaddress_mobile = ipaddress_mobilein;
@@ -65,7 +66,7 @@ public class InfoJsonSend{
 		cellInfo.listen(MyListener ,PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
+        sendOnMobile = sendOnMobile;
 
 
     }
@@ -212,7 +213,7 @@ public class InfoJsonSend{
 		Log.i("cellPhoneInfo","Trying to Connect");
 		ConnectivityManager connMgr = (ConnectivityManager)
 				my_context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if(connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()){
+		if(connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected() && !sendOnMobile){
 			new PostToServerTask().execute(jsonInfo, ipaddress_mobile);
 		}
 		else {
