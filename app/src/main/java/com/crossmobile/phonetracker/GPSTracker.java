@@ -42,14 +42,14 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	LocationRequest mLocationRequest;
 	boolean mUpdatesRequested;
 
-    private static final long MIN_DISTANCE = 10; // 0 meters
+    private static final long MIN_DISTANCE = 2; // 0 meters
     
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 10;
+    //public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
     // Update frequency in milliseconds
-    private static final long UPDATE_INTERVAL =
-            MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
+    //private static final long UPDATE_INTERVAL =
+    //        MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
     // The fastest update frequency, in seconds
     private static final int FASTEST_INTERVAL_IN_SECONDS = 10;
     // A fast frequency ceiling in milliseconds
@@ -108,7 +108,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     	Log.i("cellPhoneInfo", "Location Changed");
 		jsonOutput.postToServer(mLocationClient.getLastLocation());
         if(isDebugMsg){
-		    Toast.makeText(this, "New Location " + mLocationClient.getLastLocation().toString() + " posted to server", Toast.LENGTH_SHORT).show();
+		    Toast.makeText(this, "New Location " + mLocationClient.getLastLocation().toString() + " sending", Toast.LENGTH_SHORT).show();
         }
     }
     
