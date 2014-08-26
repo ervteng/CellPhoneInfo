@@ -29,6 +29,15 @@ import android.net.wifi.WifiManager;
 import com.b2msolutions.reyna.*;
 import com.b2msolutions.reyna.services.StoreService;
 
+// Classes for getting signal strength
+import android.telephony.CellInfo;
+import android.telephony.CellInfoCdma;
+import android.telephony.CellInfoGsm;
+import android.telephony.CellInfoLte;
+import android.telephony.CellSignalStrengthCdma;
+import android.telephony.CellSignalStrengthGsm;
+import android.telephony.CellSignalStrengthLte;
+
 public class InfoJsonSend{
 
 	double Latitude;
@@ -165,6 +174,45 @@ public class InfoJsonSend{
 
 
     }
+
+
+    public myCellInfo getMyCellInfo()
+    {
+        myCellInfo mCInfo = new myCellInfo();
+        try {
+            //final TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+            for (final CellInfo info : cellInfo.getAllCellInfo()) {
+                // Only get information for the currently registered network.
+                if (info.isRegistered()) {
+                    if (info instanceof CellInfoGsm) {
+                        final CellSignalStrengthGsm gsm = ((CellInfoGsm) info).getCellSignalStrength();
+                        //Log.e("InfoJsonSend", "getDBM:" + String.valueOf(gsm.getDbm()));
+                        mCInfo.LAC = ((CellInfoGsm) info).getCellIdentity().getLac();
+                        mCInfo.RSSI = gsm.getDbm();
+                    } else if (info instanceof CellInfoCdma) {
+                        final CellSignalStrengthCdma cdma = ((CellInfoCdma) info).getCellSignalStrength();
+                        mCInfo.RSSI = cdma.getDbm();
+                    } else if (info instanceof CellInfoLte) {
+                        final CellSignalStrengthLte lte = ((CellInfoLte) info).getCellSignalStrength();
+                        mCInfo.RSSI = lte.getDbm();
+                    } else {
+                        throw new Exception("Unknown type of cell signal!");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("InfoJsonSend", "Unable to obtain cell signal information", e);
+
+        }
+        return mCInfo;
+    }
+
+    //Class to return RSSI and LAC
+    public class myCellInfo {
+        int RSSI = -1;
+        int LAC = -1;
+    }
+
     //Checks if server is accessible by mobile or wifi, and puts in a request.
 	public void postToServer(Location location)
 	{
@@ -181,6 +229,7 @@ public class InfoJsonSend{
         timeStamp = tsLong/1000;
 
         ts = tsLong.toString();
+        myCellInfo currentCellInfo = getMyCellInfo();
 
         // Get WIFI connectivity information
         WifiInfo winfo = wifiManager.getConnectionInfo();
@@ -196,8 +245,9 @@ public class InfoJsonSend{
             userInfo.put("longitude", longitudeStr);
             userInfo.put("imei", IMEINumber);
             userInfo.put("imsi", IMSINumber);
-            userInfo.put("RSSI", String.valueOf(signalStrengthDB));
-            userInfo.put("lac", String.valueOf(gsmLoc.getLac()));
+            if(currentCellInfo.RSSI != -1)
+                userInfo.put("RSSI", String.valueOf(currentCellInfo.RSSI));
+            userInfo.put("lac", String.valueOf(currentCellInfo.LAC));
             userInfo.put("timestamp", tsLong);
             userInfo.put("mac", macAddress);
             userInfo.put("ipaddr", String.valueOf(phoneIPAddress));
