@@ -1,35 +1,15 @@
 package com.crossmobile.phonetracker;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
-import android.net.ConnectivityManager;
-
-
-import android.net.wifi.WifiInfo;
-import android.os.AsyncTask;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
-import android.util.Log;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import com.b2msolutions.reyna.*;
-import com.b2msolutions.reyna.services.StoreService;
-
-// Classes for getting signal strength
+import android.os.AsyncTask;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoGsm;
@@ -37,14 +17,40 @@ import android.telephony.CellInfoLte;
 import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthGsm;
 import android.telephony.CellSignalStrengthLte;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
+
+import com.b2msolutions.reyna.Header;
+import com.b2msolutions.reyna.Message;
+import com.b2msolutions.reyna.services.StoreService;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
+// Classes for getting signal strength
 
 public class InfoJsonSend{
 
 	double Latitude;
 	double Longitude;
+    double Altitude;
 	String latitudeStr;
 	String longitudeStr;
 	String jsonOutput;
+    String altitudeStr;
 	TelephonyManager  cellInfo;
 	String IMEINumber;
 	String IMSINumber;
@@ -54,11 +60,15 @@ public class InfoJsonSend{
 	String ts;
 	String ipaddress, ipaddress_mobile;
 	Context my_context;
+    //Calibration value for barometer
+    double pressureASL;
     boolean sendOnMobile;
+
+    boolean hasBarometer = false;
 	MyPhoneStateListener    MyListener;
     WifiManager wifiManager;
 
-    public InfoJsonSend(Context context, String ipaddressin, String ipaddress_mobilein, boolean sendOnMobile){
+    public InfoJsonSend(Context context, String ipaddressin, String ipaddress_mobilein, boolean sendOnMobile, double pressureASL_in){
 		//gps = new GPSTracker(context);
 		ipaddress = ipaddressin;
 		ipaddress_mobile = ipaddress_mobilein;
@@ -75,6 +85,21 @@ public class InfoJsonSend{
 		cellInfo.listen(MyListener ,PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+
+        MySensorListener mySensorListener = new MySensorListener();
+        pressureASL = pressureASL_in;
+        SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        List<Sensor> sensors = sensorManager.getSensorList(Sensor.TYPE_PRESSURE);
+
+
+        if(sensors.size() > 0) {
+            hasBarometer = true;
+
+            Sensor sensor = sensors.get(0);
+            sensorManager.registerListener(mySensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        }
         sendOnMobile = sendOnMobile;
 
 
@@ -97,6 +122,24 @@ public class InfoJsonSend{
       }
 
     }/* End of private Class */
+
+    private class MySensorListener implements SensorEventListener
+    {
+        //Sensor/Barometer methods
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float pressure = event.values[0];
+
+            Altitude = SensorManager.getAltitude((float)pressureASL, pressure);
+
+        }
+    }
 	
 	public int sendToReyna(JSONObject jsonInfo, String ipaddr){
 		
@@ -176,6 +219,7 @@ public class InfoJsonSend{
     }
 
 
+
     public myCellInfo getMyCellInfo()
     {
         myCellInfo mCInfo = new myCellInfo();
@@ -214,15 +258,22 @@ public class InfoJsonSend{
     }
 
     //Checks if server is accessible by mobile or wifi, and puts in a request.
-	public void postToServer(Location location)
+	public String postToServer(Location location)
 	{
+        Log.d("cellPHoneINfo",String.valueOf(pressureASL));
         // Get latitude and longitude from location
         Latitude = location.getLatitude();
         Longitude = location.getLongitude();
+        if(!hasBarometer)
+            Altitude = location.getAltitude();
 
         latitudeStr = String.valueOf(Latitude);
         longitudeStr = String.valueOf(Longitude);
 
+        // Also, round the obnoxiously long altitude values.
+        altitudeStr = String.format("%.2f", Altitude);
+
+        //Toast.makeText(my_context, "Altitude is " + Double.toString(Altitude), Toast.LENGTH_SHORT).show();
         GsmCellLocation gsmLoc = (GsmCellLocation)cellInfo.getCellLocation();
 
         tsLong = System.currentTimeMillis();
@@ -236,6 +287,13 @@ public class InfoJsonSend{
         String macAddress = winfo.getMacAddress();
         int phoneIPAddress = winfo.getIpAddress();
 
+        // Format IP address
+        String ipString = String.format(
+                "%d.%d.%d.%d",
+                (phoneIPAddress & 0xff),
+                (phoneIPAddress >> 8 & 0xff),
+                (phoneIPAddress >> 16 & 0xff),
+                (phoneIPAddress >> 24 & 0xff));
 
         JSONObject jsonInfo = new JSONObject();
         JSONObject userInfo = new JSONObject();
@@ -243,6 +301,7 @@ public class InfoJsonSend{
 
             userInfo.put("latitude", latitudeStr);
             userInfo.put("longitude", longitudeStr);
+            userInfo.put("altitude", altitudeStr);
             userInfo.put("imei", IMEINumber);
             userInfo.put("imsi", IMSINumber);
             if(currentCellInfo.RSSI != -1)
@@ -250,7 +309,7 @@ public class InfoJsonSend{
             userInfo.put("lac", String.valueOf(currentCellInfo.LAC));
             userInfo.put("timestamp", tsLong);
             userInfo.put("mac", macAddress);
-            userInfo.put("ipaddr", String.valueOf(phoneIPAddress));
+            userInfo.put("ipaddr", ipString);
             //storeData.put("timestamp_seconds", timeStamp);
             jsonInfo.put("user_location",userInfo);
 
@@ -269,6 +328,7 @@ public class InfoJsonSend{
 		else {
             sendToReyna(jsonInfo, ipaddress);
 		}
+        return "Server Post Latitude: " + latitudeStr + " Longitude " + longitudeStr + " Altitude " + altitudeStr + " RSSI " + String.valueOf(currentCellInfo.RSSI);
 
 	}
 

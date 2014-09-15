@@ -12,20 +12,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
- 
-public class GPSTracker extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
-GooglePlayServicesClient.OnConnectionFailedListener {
+import com.google.android.gms.location.LocationServices;
 
- 
-    // flag for GPS status
-    boolean canGetLocation = false;
+public class GPSTracker extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks,
+GoogleApiClient.OnConnectionFailedListener {
+    public static final String TAG = "GPSTracker";
 
     
     LocationClient mLocationClient;
+    GoogleApiClient mClient;
 
     // Do we want debug toast messages?
     boolean isDebugMsg;
@@ -55,7 +54,7 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     // A fast frequency ceiling in milliseconds
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
- 
+
     // The minimum time between updates in milliseconds
 
 
@@ -73,15 +72,17 @@ GooglePlayServicesClient.OnConnectionFailedListener {
         ipAddress = sharedPref.getString(SettingsActivity.KEY_WIFI_IP_ADDRESS, "");
         ipAddressMobile = sharedPref.getString(SettingsActivity.KEY_GPRS_IP_ADDRESS, "");
         int updateInterval = Integer.valueOf(sharedPref.getString(SettingsActivity.KEY_UPDATE_INTERVAL, "5"));
-
-    	jsonOutput = new InfoJsonSend(this, ipAddress, ipAddressMobile, sendOnMobile);
-        mLocationClient = new LocationClient(this, this, this);	
+        double pressureASL = Double.valueOf(sharedPref.getString(SettingsActivity.KEY_PRESSURE_ASL, "1013.25"));
+    	jsonOutput = new InfoJsonSend(this, ipAddress, ipAddressMobile, sendOnMobile, pressureASL);
+        //mLocationClient = new LocationClient(this, this, this);
+        mClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
         isDebugMsg = sharedPref.getBoolean(SettingsActivity.KEY_DEBUG, false);
         isDynamic = sharedPref.getBoolean(SettingsActivity.KEY_DYNAMIC_LOCATIONS, true);
         sendOnMobile = true;
-        //jsonOutput.postToServer(location);	
-       
-        //mLocationClient.requestLocationUpdates()
         
         mLocationRequest = LocationRequest.create();
         // Use high accuracy
@@ -99,19 +100,26 @@ GooglePlayServicesClient.OnConnectionFailedListener {
             mLocationRequest.setFastestInterval(updateInterval*1000);
         }
         mUpdatesRequested = true;
-        mLocationClient.connect();
+
+        mClient.connect();
+
+        //Check for barometer
+
+
+        //mLocationClient.connect();
         return Service.START_NOT_STICKY;
     }
 
-     
+    // Sensor/barometer methods
+
     
  
     @Override
     public void onLocationChanged(Location location) {
     	Log.i("cellPhoneInfo", "Location Changed");
-		jsonOutput.postToServer(mLocationClient.getLastLocation());
+		String debugMessage = jsonOutput.postToServer(location);
         if(isDebugMsg){
-		    Toast.makeText(this, "New Location " + mLocationClient.getLastLocation().toString() + " sending", Toast.LENGTH_SHORT).show();
+		    Toast.makeText(this, debugMessage, Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -120,15 +128,17 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     public void onDestroy(){
     	Log.i("GPSTracker","stopped");
     	//removeLocationUpdates(this);
-    	if (mLocationClient.isConnected()) {
+    	if (mClient.isConnected()) {
+            mClient.disconnect();
             /*
              * Remove location updates for a listener.
              * The current Activity is the listener, so
              * the argument is "this".
              */
-            mLocationClient.removeLocationUpdates((LocationListener)this);
+            //mClient.removeLocationUpdates((LocationListener)this);
         }
-    	mLocationClient.disconnect();
+
+    	//mLocationClient.disconnect();
     	Toast.makeText(this, "Logging stopped", Toast.LENGTH_SHORT).show();
     }
  
@@ -157,18 +167,25 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 	@Override
 	public void onConnected(Bundle connectionHint) {
 
-		Log.d("GPSTracker",mLocationClient.getLastLocation().toString());
+		//Log.d("GPSTracker",mLocationClient.getLastLocation().toString());
 		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-		mLocationClient.requestLocationUpdates(mLocationRequest, this);
-		jsonOutput.postToServer(mLocationClient.getLastLocation());
-        Log.d("GPSTracker", Float.toString(mLocationRequest.getSmallestDisplacement()));
+		//mLocationClient.requestLocationUpdates(mLocationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mClient, mLocationRequest, this);
+		//jsonOutput.postToServer(mLocationClient.getLastLocation());
+        //Log.d("GPSTracker", Float.toString(mLocationRequest.getSmallestDisplacement()));
 	}
 
-	@Override
-	public void onDisconnected() {
-		Toast.makeText(this, "Logging stopped", Toast.LENGTH_SHORT).show();
-		
-	}
+//	@Override
+//	public void onDisconnected() {
+//		Toast.makeText(this, "Logging stopped", Toast.LENGTH_SHORT).show();
+//
+//	}
+
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "GoogleApiClient connection has been suspend");
+        Toast.makeText(this, "Logging stopped", Toast.LENGTH_SHORT).show();
+    }
 
 
  

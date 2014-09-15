@@ -22,6 +22,7 @@ public class SettingsActivity extends PreferenceActivity {
     public static final String KEY_MANUAL_MODE = "pref_manual_mode";
     public static final String KEY_DEBUG = "pref_debug_msg";
     public static final String KEY_DYNAMIC_LOCATIONS = "pref_dynamic_locations";
+    public static final String KEY_PRESSURE_ASL = "pref_pressure_asl";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
