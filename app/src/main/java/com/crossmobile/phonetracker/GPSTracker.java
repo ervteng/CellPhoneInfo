@@ -1,21 +1,21 @@
 package com.crossmobile.phonetracker;
 
+import android.app.Service;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-
-import android.app.Service;
-import android.content.Intent;
-import android.content.Context;
-import android.location.Location;
-import android.os.Binder;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
-import android.content.BroadcastReceiver;
  
 public class GPSTracker extends Service implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener {
@@ -68,14 +68,17 @@ GooglePlayServicesClient.OnConnectionFailedListener {
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-    	ipAddress=intent.getExtras().getString("IP");
-    	ipAddressMobile = intent.getExtras().getString("IP_mobile");
-        int updateInterval = intent.getExtras().getInt("updateInterval");
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        ipAddress = sharedPref.getString(SettingsActivity.KEY_WIFI_IP_ADDRESS, "");
+        ipAddressMobile = sharedPref.getString(SettingsActivity.KEY_GPRS_IP_ADDRESS, "");
+        int updateInterval = Integer.valueOf(sharedPref.getString(SettingsActivity.KEY_UPDATE_INTERVAL, "5"));
+
     	jsonOutput = new InfoJsonSend(this, ipAddress, ipAddressMobile, sendOnMobile);
         mLocationClient = new LocationClient(this, this, this);	
-        isDebugMsg = intent.getExtras().getBoolean("DebugOn");
-        isDynamic = intent.getExtras().getBoolean("DynamicOn");
-        sendOnMobile = intent.getExtras().getBoolean("SendOnMobile");
+        isDebugMsg = sharedPref.getBoolean(SettingsActivity.KEY_DEBUG, false);
+        isDynamic = sharedPref.getBoolean(SettingsActivity.KEY_DYNAMIC_LOCATIONS, true);
+        sendOnMobile = true;
         //jsonOutput.postToServer(location);	
        
         //mLocationClient.requestLocationUpdates()

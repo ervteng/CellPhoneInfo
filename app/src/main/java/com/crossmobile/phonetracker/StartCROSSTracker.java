@@ -15,12 +15,6 @@ public class StartCROSSTracker extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             Intent i = new Intent(context, GPSTracker.class);
-            i.putExtra("IP", context.getString(R.string.defaultWifiAddress));
-            i.putExtra("IP_mobile", context.getString(R.string.defaultWifiAddress));
-            i.putExtra("DebugOn", false);
-            i.putExtra("updateInterval",Integer.valueOf(context.getString(R.string.defaultInterval)));
-            i.putExtra("DynamicOn", true);
-            i.putExtra("SendOnMobile",true);
             context.startService(i);
         }
     }

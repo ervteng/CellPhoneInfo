@@ -1,16 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
     <item
-        android:id="@+id/debug"
-        android:title="Debug Messages"
+        android:id="@+id/settings"
+        android:title="Settings"
         android:showAsAction="never"
-        android:checkable="true"
-        android:checked="false"/>
-    <item
-        android:id="@+id/dynamic"
-        android:title="Dynamic Locations"
-        android:showAsAction="never"
-        android:checkable="true"
-        android:checked="true"/>
+        android:checkable="false"/>
 
 </menu>

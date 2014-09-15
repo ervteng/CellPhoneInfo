@@ -8,5 +8,17 @@
     <string name="defaultWifiAddress">http://10.215.4.2:8080/user_locations.json</string>
     <string name="defaultInterval">2</string>
 
+    <string name="pref_GPRS_IP_address">"GPRS IP Address"</string>
+    <string name="pref_WIFI_IP_address">"Wifi IP Address"</string>
 
+    <string name="pref_manual_mode">"Manual Mode"</string>
+    <string name="pref_manual_mode_desc">"Set app settings manually instead of fetching from server."</string>
+
+    <string name="pref_update_interval">"Minimum Update Interval"</string>
+    <string name="pref_update_interval_desc">"Minimum update interval in seconds."</string>
+
+    <string name="pref_debug_msg">"Debug Messages"</string>
+    <string name="pref_debug_msg_desc">"Display debug messages on send."</string>
+    <string name="pref_dynamic_locations">"Dynamic Locations"</string>
+    <string name="pref_dynamic_locations_desc">"Only send data to server after some movement."</string>
 </resources>

@@ -8,74 +8,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CellPhoneInfo" >
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="800dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:ems="10"
-        android:text="@string/defaultWifiAddress" >
-
-        <requestFocus />
-    </EditText>
 
     <ToggleButton
         android:id="@+id/toggleButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editTextGPRS"
-        android:layout_alignRight="@+id/editTextGPRS"
-        android:layout_below="@+id/editTextGPRS"
-        android:layout_marginTop="60dp"
-        android:text="ToggleButton" />
-
-    <EditText
-        android:id="@+id/editTextGPRS"
-        android:layout_width="800dp"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText2"
-        android:layout_below="@+id/editText2"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:text="@string/defaultGPRSAddress" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText2"
-        android:layout_below="@+id/editText2"
-        android:text="WiFi IP Address" />
-
-    <EditText
-        android:id="@+id/editTextUpdateInterval"
-        android:layout_width="800dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:ems="10"
-        android:text="@string/defaultInterval"
-        android:inputType="number"
-        android:layout_below="@+id/toggleButton1"
+        android:text="ToggleButton"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editTextGPRS"
-        android:layout_below="@+id/editTextGPRS"
-        android:text="GPRS IP Address" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update Interval in Seconds"
-        android:layout_below="@+id/editTextUpdateInterval"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

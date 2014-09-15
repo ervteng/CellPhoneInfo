@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="pref_manual_mode"
+        android:title="@string/pref_manual_mode"
+        android:summary="@string/pref_manual_mode_desc"
+        android:defaultValue="false" />
+    <EditTextPreference
+        android:dependency="pref_manual_mode"
+        android:key="pref_gprs_address"
+        android:title="@string/pref_GPRS_IP_address"
+        android:defaultValue="@string/defaultGPRSAddress" />
+    <EditTextPreference
+        android:dependency="pref_manual_mode"
+        android:key="pref_wifi_address"
+        android:title="@string/pref_WIFI_IP_address"
+        android:defaultValue="@string/defaultWifiAddress" />
+    <EditTextPreference
+        android:dependency="pref_manual_mode"
+        android:key="pref_update_interval"
+        android:title="@string/pref_update_interval"
+        android:summary="@string/pref_update_interval_desc"
+        android:inputType="number"
+        android:defaultValue="5" />
+    <CheckBoxPreference
+        android:dependency="pref_manual_mode"
+        android:key="pref_dynamic_locations"
+        android:title="@string/pref_dynamic_locations"
+        android:summary="@string/pref_dynamic_locations_desc"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="pref_debug_msg"
+        android:title="@string/pref_debug_msg"
+        android:summary="@string/pref_debug_msg_desc"
+        android:defaultValue="false" />
+</PreferenceScreen>
