@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/pre-dexed/debug/classes-23330cc77e60c8f2ba28d0c16295326d1f0450e1.jar"
+        jar="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.1.71/classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="0f6d5c1ef2e982c3b7858408e3df389cf5d202da"/>
+    <item
+        dex="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-f4388089fcb5db70b5a450c4212f87c2e6eddebf.jar"
+        jar="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/pre-dexed/debug/reyna-2.6-af879e0c5512241eacf66bab4e6ddba91e4d3ff7.jar"
+        jar="/Users/aloknerurkar/git/CellPhoneInfo/app/libs/reyna-2.6.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="091a0b0795c2be51586b6964201f851a26471a4e"/>
+    <item
+        dex="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/pre-dexed/debug/classes-93a543cb00054f464173360ee04b85fa2d391e7c.jar"
+        jar="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="/Users/aloknerurkar/git/CellPhoneInfo/app/build/intermediates/pre-dexed/debug/support-annotations-20.0.0-bca9cd8c8082330ef7549e0398af852faae531fd.jar"
+        jar="/Applications/Android Studio.app/sdk/extras/android/m2repository/com/android/support/support-annotations/20.0.0/support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+
+</pre-dex-items>

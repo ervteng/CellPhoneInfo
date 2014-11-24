@@ -1,0 +1,124 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
+
+    <ScrollView
+        android:id="@+id/scroll1"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent">
+
+        <RelativeLayout
+            android:id="@+id/contentVideo"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30px"
+            android:paddingTop="15px"
+            android:background="#FFFFFF">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/audio_play"
+                android:background="@drawable/ic_launcher"
+                android:clickable="true"
+                android:onClick="onClick" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/audio_play"/>
+
+            <Button
+                android:id="@+id/Play1"
+                android:layout_gravity="left"
+                android:text="Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/audio_play"/>
+
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/audio_play2"
+                android:background="@drawable/ic_launcher"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:layout_below="@+id/Play1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/audio_play2"
+                android:layout_below="@id/Play1"/>
+
+            <Button
+                android:id="@+id/Play2"
+                android:layout_gravity="left"
+                android:text="Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/audio_play2"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/audio_play3"
+                android:background="@drawable/ic_launcher"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:layout_below="@+id/Play2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/audio_play3"
+                android:layout_below="@id/Play2"/>
+
+            <Button
+                android:id="@+id/Play3"
+                android:layout_gravity="left"
+                android:text="Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/audio_play3"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/audio_play4"
+                android:background="@drawable/ic_launcher"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:layout_below="@+id/Play3"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:layout_gravity="center"
+                android:layout_toRightOf="@+id/audio_play4"
+                android:layout_below="@id/Play3"/>
+
+
+            <Button
+                android:id="@+id/Play4"
+                android:layout_gravity="left"
+                android:text="Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/audio_play4"/>
+
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>
+
+<!-- From: file:/Users/aloknerurkar/git/CellPhoneInfo/app/src/main/res/layout/activity_audio_screen.xml -->

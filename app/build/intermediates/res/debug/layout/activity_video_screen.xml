@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
+
+    <ScrollView
+        android:id="@+id/scroll1"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#FFFFFF">
+
+            <LinearLayout
+                android:id="@+id/contentVideo"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="30px"
+                android:paddingTop="15px"
+                android:background="#FFFFFF">
+
+                <TextView
+                    android:id="@+id/learn_hiv_blck1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/learn_hiv_blck1"
+                    android:textColor="#000000"
+                    android:textStyle="italic"
+                    android:background="#FFFFFF"
+                    android:layout_gravity="left" />
+
+                <TextView
+                    android:id="@+id/learn_hiv_blck2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15px"
+                    android:text="@string/learn_hiv_blck2"
+                    android:textColor="#000000"
+                    android:background="#FFFFFF"
+                    android:layout_gravity="left" />
+
+                <TextView
+                    android:id="@+id/learn_hiv_blck3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15px"
+                    android:text="@string/learn_hiv_blck3"
+                    android:textColor="#000000"
+                    android:background="#FFFFFF"
+                    android:layout_gravity="left" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF">
+
+                    <com.crossmobile.phonetracker.video_lib
+                        android:id="@+id/VideoView"
+                        android:layout_width="283dip"
+                        android:layout_height="183dip" />
+                    <Button
+                        android:id="@+id/Play1"
+                        android:layout_gravity="left"
+                        android:text="Play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/contentVideo1"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingLeft="30px"
+                android:paddingTop="15px"
+                android:paddingBottom="40dip"
+                android:background="#FFFFFF">
+
+                <TextView
+                    android:id="@+id/learn_hiv_blck4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/learn_hiv_blck4"
+                    android:textColor="#000000"
+                    android:background="#FFFFFF"
+                    android:layout_gravity="left" />
+
+                <com.crossmobile.phonetracker.video_lib
+                    android:id="@+id/VideoView1"
+                    android:layout_width="280dip"
+                    android:layout_height="190dip"/>
+                <Button
+                    android:id="@+id/Play2"
+                    android:layout_gravity="left"
+                    android:text="Play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout><!-- From: file:/Users/aloknerurkar/git/CellPhoneInfo/app/src/main/res/layout/activity_video_screen.xml -->

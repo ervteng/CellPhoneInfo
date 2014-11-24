@@ -164,6 +164,10 @@ GooglePlayServicesClient.OnConnectionFailedListener {
 		Toast.makeText(this, "Logging stopped", Toast.LENGTH_SHORT).show();
 		
 	}
+
+    public Location getLocation(){
+        return mLocationClient.getLastLocation();
+    }
  
 }
 

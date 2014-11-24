@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/debug"
+        android:title="Debug Messages"
+        android:showAsAction="never"
+        android:checkable="true"
+        android:checked="false"/>
+    <item
+        android:id="@+id/dynamic"
+        android:title="Dynamic Locations"
+        android:showAsAction="never"
+        android:checkable="true"
+        android:checked="true"/>
+
+</menu>
+<!-- From: file:/Users/aloknerurkar/git/CellPhoneInfo/app/src/main/res/menu/cell_phone_info.xml -->
