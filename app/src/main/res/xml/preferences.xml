@@ -28,6 +28,13 @@
         android:title="@string/pref_dynamic_locations"
         android:summary="@string/pref_dynamic_locations_desc"
         android:defaultValue="true" />
+    <EditTextPreference
+        android:dependency="pref_manual_mode"
+        android:key="pref_pressure_asl"
+        android:title="@string/pref_pressure_asl"
+        android:summary="@string/pref_pressure_asl_desc"
+        android:inputType="numberDecimal"
+        android:defaultValue="1013.25" />
     <CheckBoxPreference
         android:key="pref_debug_msg"
         android:title="@string/pref_debug_msg"

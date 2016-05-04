@@ -123,8 +123,13 @@ public class InfoJsonSend{
 
     }/* End of private Class */
 
+    // Sensor listner for Barometer/Altitude
     private class MySensorListener implements SensorEventListener
     {
+        int readingCount = 0;
+        float pressureSum = 0;
+        //We want to prevent a 0 reading at the very beginning
+        boolean firstSensorReading = true;
         //Sensor/Barometer methods
 
         @Override
@@ -135,8 +140,19 @@ public class InfoJsonSend{
         @Override
         public void onSensorChanged(SensorEvent event) {
             float pressure = event.values[0];
-
-            Altitude = SensorManager.getAltitude((float)pressureASL, pressure);
+            pressureSum += pressure;
+            readingCount ++;
+            //Average the last 10 values
+            if(readingCount == 10){
+                float pressureAvg = pressureSum/10;
+                Altitude = SensorManager.getAltitude((float)pressureASL, pressureAvg);
+                readingCount = 0;
+                pressureSum = 0;
+            }
+            else if(firstSensorReading){
+                Altitude = SensorManager.getAltitude((float)pressureASL, pressure);
+                firstSensorReading = false;
+            }
 
         }
     }
@@ -232,6 +248,11 @@ public class InfoJsonSend{
                         final CellSignalStrengthGsm gsm = ((CellInfoGsm) info).getCellSignalStrength();
                         //Log.e("InfoJsonSend", "getDBM:" + String.valueOf(gsm.getDbm()));
                         mCInfo.LAC = ((CellInfoGsm) info).getCellIdentity().getLac();
+                        // Bug in Android? If no LAC, use getCellLocation (old API)
+                        if(mCInfo.LAC == 0) {
+                            GsmCellLocation location = (GsmCellLocation) cellInfo.getCellLocation();
+                            mCInfo.LAC = location.getLac();
+                        }
                         mCInfo.RSSI = gsm.getDbm();
                     } else if (info instanceof CellInfoCdma) {
                         final CellSignalStrengthCdma cdma = ((CellInfoCdma) info).getCellSignalStrength();
@@ -306,6 +327,7 @@ public class InfoJsonSend{
             userInfo.put("imsi", IMSINumber);
             if(currentCellInfo.RSSI != -1)
                 userInfo.put("RSSI", String.valueOf(currentCellInfo.RSSI));
+            //userInfo.put("RSSI", String.valueOf(i1) );
             userInfo.put("lac", String.valueOf(currentCellInfo.LAC));
             userInfo.put("timestamp", tsLong);
             userInfo.put("mac", macAddress);

@@ -21,4 +21,6 @@
     <string name="pref_debug_msg_desc">"Display debug messages on send."</string>
     <string name="pref_dynamic_locations">"Dynamic Locations"</string>
     <string name="pref_dynamic_locations_desc">"Only send data to server after some movement."</string>
+    <string name="pref_pressure_asl">"Pressure at sea level"</string>
+    <string name="pref_pressure_asl_desc">"Pressure at sea level in hPa. Used to compute altitude."</string>
 </resources>

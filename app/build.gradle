@@ -1,24 +1,30 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
+
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    useLibrary 'org.apache.http.legacy'
+    compileSdkVersion 23
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 19
+        minSdkVersion 17
+        targetSdkVersion 21
     }
 
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
     compile files('libs/reyna-2.6.jar')
-    compile 'com.android.support:support-v4:19.+'
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.google.android.gms:play-services:8.4.0'
+    compile 'com.google.android.gms:play-services-ads:8.4.0'
+    compile 'com.google.android.gms:play-services-auth:6.5.87'
+    compile 'com.google.android.gms:play-services-gcm:6.5.87'
 }
