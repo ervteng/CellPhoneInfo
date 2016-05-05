@@ -4,7 +4,7 @@
         android:key="pref_manual_mode"
         android:title="@string/pref_manual_mode"
         android:summary="@string/pref_manual_mode_desc"
-        android:defaultValue="false" />
+        android:defaultValue="true" />
     <EditTextPreference
         android:dependency="pref_manual_mode"
         android:key="pref_gprs_address"
@@ -28,16 +28,21 @@
         android:title="@string/pref_dynamic_locations"
         android:summary="@string/pref_dynamic_locations_desc"
         android:defaultValue="true" />
-    <EditTextPreference
+    <CheckBoxPreference
         android:dependency="pref_manual_mode"
-        android:key="pref_pressure_asl"
-        android:title="@string/pref_pressure_asl"
-        android:summary="@string/pref_pressure_asl_desc"
-        android:inputType="numberDecimal"
-        android:defaultValue="1013.25" />
+        android:key="pref_offline"
+        android:title="@string/pref_offline"
+        android:summary="@string/pref_offline_desc"
+        android:defaultValue="true" />
     <CheckBoxPreference
         android:key="pref_debug_msg"
         android:title="@string/pref_debug_msg"
         android:summary="@string/pref_debug_msg_desc"
         android:defaultValue="false" />
+    <EditTextPreference
+        android:key="pref_pressure_asl"
+        android:title="@string/pref_pressure_asl"
+        android:summary="@string/pref_pressure_asl_desc"
+        android:inputType="number"
+        android:defaultValue="1013.25" />
 </PreferenceScreen>

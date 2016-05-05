@@ -10,13 +10,18 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.telephony.CellIdentityCdma;
+import android.telephony.CellIdentityLte;
+import android.telephony.CellIdentityWcdma;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoCdma;
 import android.telephony.CellInfoGsm;
 import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
 import android.telephony.CellSignalStrengthCdma;
 import android.telephony.CellSignalStrengthGsm;
 import android.telephony.CellSignalStrengthLte;
+import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -38,12 +43,15 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 // Classes for getting signal strength
 
 public class InfoJsonSend{
-
+    private static final String TAG = "cellPhoneInfo";
 	double Latitude;
 	double Longitude;
     double Altitude;
@@ -62,13 +70,16 @@ public class InfoJsonSend{
 	Context my_context;
     //Calibration value for barometer
     double pressureASL;
-    boolean sendOnMobile;
+    boolean mSendOnMobile;
 
     boolean hasBarometer = false;
 	MyPhoneStateListener    MyListener;
     WifiManager wifiManager;
 
-    public InfoJsonSend(Context context, String ipaddressin, String ipaddress_mobilein, boolean sendOnMobile, double pressureASL_in){
+    //CSVWriter
+    CSVWriter mWriter = null;
+
+    public InfoJsonSend(Context context, String ipaddressin, String ipaddress_mobilein, boolean sendOnMobile, double pressureASL_in, CSVWriter writer){
 		//gps = new GPSTracker(context);
 		ipaddress = ipaddressin;
 		ipaddress_mobile = ipaddress_mobilein;
@@ -100,8 +111,8 @@ public class InfoJsonSend{
             sensorManager.registerListener(mySensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         }
-        sendOnMobile = sendOnMobile;
-
+        mSendOnMobile = sendOnMobile;
+        mWriter = writer;
 
     }
 	
@@ -243,6 +254,7 @@ public class InfoJsonSend{
             //final TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
             for (final CellInfo info : cellInfo.getAllCellInfo()) {
                 // Only get information for the currently registered network.
+                Log.i(TAG,info.toString());
                 if (info.isRegistered()) {
                     if (info instanceof CellInfoGsm) {
                         final CellSignalStrengthGsm gsm = ((CellInfoGsm) info).getCellSignalStrength();
@@ -254,12 +266,28 @@ public class InfoJsonSend{
                             mCInfo.LAC = location.getLac();
                         }
                         mCInfo.RSSI = gsm.getDbm();
+                        mCInfo.network_type = "GSM";
                     } else if (info instanceof CellInfoCdma) {
                         final CellSignalStrengthCdma cdma = ((CellInfoCdma) info).getCellSignalStrength();
                         mCInfo.RSSI = cdma.getDbm();
+                        mCInfo.network_type = "CDMA";
+                        CellIdentityCdma cid = ((CellInfoCdma) info).getCellIdentity();
+                        mCInfo.MNC = cid.getNetworkId();
+
+                    } else if (info instanceof CellInfoWcdma) {
+                        final CellSignalStrengthWcdma cdma = ((CellInfoWcdma) info).getCellSignalStrength();
+                        mCInfo.RSSI = cdma.getDbm();
+                        mCInfo.network_type = "WCDMA";
+                        CellIdentityWcdma cid = ((CellInfoWcdma) info).getCellIdentity();
+                        mCInfo.MNC = cid.getMnc();
+                        mCInfo.MCC = cid.getMcc();
                     } else if (info instanceof CellInfoLte) {
                         final CellSignalStrengthLte lte = ((CellInfoLte) info).getCellSignalStrength();
                         mCInfo.RSSI = lte.getDbm();
+                        mCInfo.network_type = "LTE";
+                        CellIdentityLte cid = ((CellInfoLte) info).getCellIdentity();
+                        mCInfo.MNC = cid.getMnc();
+                        mCInfo.MCC = cid.getMcc();
                     } else {
                         throw new Exception("Unknown type of cell signal!");
                     }
@@ -276,12 +304,15 @@ public class InfoJsonSend{
     public class myCellInfo {
         int RSSI = -1;
         int LAC = -1;
+        String network_type = "";
+        int MCC = -1;
+        int MNC = -1;
     }
 
     //Checks if server is accessible by mobile or wifi, and puts in a request.
 	public String postToServer(Location location)
 	{
-        Log.d("cellPHoneINfo",String.valueOf(pressureASL));
+        Log.d(TAG,String.valueOf(pressureASL));
         // Get latitude and longitude from location
         Latitude = location.getLatitude();
         Longitude = location.getLongitude();
@@ -294,14 +325,19 @@ public class InfoJsonSend{
         // Also, round the obnoxiously long altitude values.
         altitudeStr = String.format("%.2f", Altitude);
 
-        //Toast.makeText(my_context, "Altitude is " + Double.toString(Altitude), Toast.LENGTH_SHORT).show();
-        GsmCellLocation gsmLoc = (GsmCellLocation)cellInfo.getCellLocation();
-
         tsLong = System.currentTimeMillis();
         timeStamp = tsLong/1000;
 
         ts = tsLong.toString();
+
+        // Cell information
         myCellInfo currentCellInfo = getMyCellInfo();
+        // Convert information to strings
+        String lacStr = String.valueOf(currentCellInfo.LAC);
+        String ntStr = String.valueOf(currentCellInfo.network_type);
+        String mncStr = String.valueOf(currentCellInfo.MNC);
+        String mccStr = String.valueOf(currentCellInfo.MCC);
+        String rssiStr = String.valueOf(currentCellInfo.RSSI);
 
         // Get WIFI connectivity information
         WifiInfo winfo = wifiManager.getConnectionInfo();
@@ -326,27 +362,36 @@ public class InfoJsonSend{
             userInfo.put("imei", IMEINumber);
             userInfo.put("imsi", IMSINumber);
             if(currentCellInfo.RSSI != -1)
-                userInfo.put("RSSI", String.valueOf(currentCellInfo.RSSI));
+                userInfo.put("RSSI", rssiStr);
             //userInfo.put("RSSI", String.valueOf(i1) );
-            userInfo.put("lac", String.valueOf(currentCellInfo.LAC));
+            userInfo.put("lac", lacStr);
+            userInfo.put("network_type", ntStr);
+            userInfo.put("mnc", mncStr);
+            userInfo.put("mcc", mccStr);
             userInfo.put("timestamp", tsLong);
             userInfo.put("mac", macAddress);
             userInfo.put("ipaddr", ipString);
             //storeData.put("timestamp_seconds", timeStamp);
             jsonInfo.put("user_location",userInfo);
-
         }
         catch (JSONException e){
 
         }
 
-		String sendToThisIP;
-		Log.i("cellPhoneInfo","Trying to Connect");
-		ConnectivityManager connMgr = (ConnectivityManager)
-				my_context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if(connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected() && !sendOnMobile){
-			new PostToServerTask().execute(jsonInfo, ipaddress_mobile);
-		}
+		Log.i(TAG,"Trying to Connect");
+
+        // Write to CSV file if can do
+        if(mWriter != null){
+            String timestring = String.valueOf(System.currentTimeMillis());
+            String[] data = {timestring, mccStr, mncStr, ntStr, rssiStr, latitudeStr, longitudeStr, altitudeStr};
+            mWriter.writeNext(data);
+            Log.i(TAG,"Writing " + (Arrays.toString(data)) + " to CSV.");
+        }
+		ConnectivityManager connMgr = (ConnectivityManager) my_context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected() && !mSendOnMobile) {
+                new PostToServerTask().execute(jsonInfo, ipaddress_mobile);
+        }
 		else {
             sendToReyna(jsonInfo, ipaddress);
 		}

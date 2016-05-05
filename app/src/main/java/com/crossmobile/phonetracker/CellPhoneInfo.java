@@ -1,7 +1,6 @@
 package com.crossmobile.phonetracker;
 
 
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;

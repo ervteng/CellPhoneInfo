@@ -23,4 +23,8 @@
     <string name="pref_dynamic_locations_desc">"Only send data to server after some movement."</string>
     <string name="pref_pressure_asl">"Pressure at sea level"</string>
     <string name="pref_pressure_asl_desc">"Pressure at sea level in hPa. Used to compute altitude."</string>
+    <string name="pref_offline">"Offline mode"</string>
+    <string name="pref_offline_desc">"Also write to CSV file on phone."</string>
+
+    <string name="csv_fields">"time,mcc,mnc,network_type,signal_strength,lat,lon,alt"</string>
 </resources>
